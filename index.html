@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<title>TradeBot Dashboard</title>
+<style>
+  html,body{height:100%;margin:0;background:#0b0e13;color:#8ec5e8;
+    font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    display:flex;align-items:center;justify-content:center;text-align:center}
+  .box{max-width:22rem;padding:1.5rem}
+  a{color:#2fe0a0;word-break:break-all}
+  .sp{width:2rem;height:2rem;margin:0 auto 1rem;border:3px solid #1c2430;
+    border-top-color:#2fe0a0;border-radius:50%;animation:s .9s linear infinite}
+  @keyframes s{to{transform:rotate(360deg)}}
+  .dim{color:#5a6b7a;font-size:.85rem;margin-top:1rem}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="sp" id="sp"></div>
+  <div id="msg">Finding your dashboard…</div>
+</div>
+<script>
+(function () {
+  var msg = document.getElementById('msg'), sp = document.getElementById('sp');
+  function stop(){ sp.style.display = 'none'; }
+  // Cache-bust so a freshly-published URL is picked up within a minute of a tunnel change.
+  fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d && d.url) {
+        msg.innerHTML = 'Opening your dashboard…<div class="dim">If it doesn\'t redirect: <a href="' + d.url + '">' + d.url + '</a></div>';
+        location.replace(d.url);
+      } else { stop(); msg.textContent = 'No dashboard URL published yet.'; }
+    })
+    .catch(function () {
+      stop();
+      msg.innerHTML = 'Could not reach the dashboard.<div class="dim">The machine may be asleep or offline. Try again in a bit.</div>';
+    });
+})();
+</script>
+</body>
+</html>
