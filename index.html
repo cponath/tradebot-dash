@@ -27,9 +27,11 @@
   var msg = document.getElementById('msg'), sp = document.getElementById('sp');
   function stop(){ sp.style.display = 'none'; }
   // Cache-bust so a freshly-published URL is picked up within a minute of a tunnel change.
+  // Parse via text() + strip any leading BOM/whitespace so a UTF-8-BOM url.json never breaks it.
   fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
+    .then(function (r) { return r.text(); })
+    .then(function (t) {
+      var d = JSON.parse(t.replace(/^﻿/, '').trim());
       if (d && d.url) {
         msg.innerHTML = 'Opening your dashboard…<div class="dim">If it doesn\'t redirect: <a href="' + d.url + '">' + d.url + '</a></div>';
         location.replace(d.url);
