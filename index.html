@@ -26,9 +26,11 @@
 (function () {
   var msg = document.getElementById('msg'), sp = document.getElementById('sp');
   function stop(){ sp.style.display = 'none'; }
+  // live.json is written by the Mac host (tools/mac_scheduler.py). url.json is the retired Windows host's
+  // file — ignored, so the old machine can no longer hijack the bookmark.
   // Cache-bust so a freshly-published URL is picked up within a minute of a tunnel change.
-  // Parse via text() + strip any leading BOM/whitespace so a UTF-8-BOM url.json never breaks it.
-  fetch('url.json?t=' + Date.now(), { cache: 'no-store' })
+  // Parse via text() + strip any leading BOM/whitespace so a UTF-8-BOM file never breaks it.
+  fetch('live.json?t=' + Date.now(), { cache: 'no-store' })
     .then(function (r) { return r.text(); })
     .then(function (t) {
       var d = JSON.parse(t.replace(/^﻿/, '').trim());
